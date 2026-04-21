@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MangaCreator.biz.id — AI Manga Creator / AIマンガクリエーター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#FF6B9D;--cyan:#00D4FF;--yellow:#FFE566;--purple:#9B59B6;
+  --green:#2ECC71;--orange:#FF8C42;
+  --bg:#0F0E17;--bg2:#1A1A2E;--bg3:#16213E;--card:#1E1E3A;
+  --text:#FFFFFE;--muted:#A8A8C0;--border:rgba(255,107,157,0.25);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Nunito','Noto Sans JP',sans-serif;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--pink);border-radius:3px}
+.bangers{font-family:'Bangers',cursive;letter-spacing:2px}
+button{cursor:pointer;border:none;outline:none;font-family:'Nunito',sans-serif}
+input,textarea,select{outline:none;font-family:'Nunito',sans-serif}
+
+/* halftone bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,107,157,0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+
+/* pages */
+.page{display:none;position:relative;z-index:1;min-height:calc(100vh - 60px);padding-top:60px}
+.page.active{display:block}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:60px;
+  background:rgba(15,14,23,0.93);backdrop-filter:blur(14px);
+  border-bottom:2px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:8px;
+}
+.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.nav-logo-icon{
+  width:36px;height:36px;border-radius:8px;border:2px solid #fff;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;
+}
+.nav-logo-text{line-height:1}
+.nav-logo-title{font-family:'Bangers',cursive;font-size:18px;color:var(--pink);letter-spacing:2px;display:block}
+.nav-logo-sub{font-size:9px;color:var(--muted);letter-spacing:1px;display:block}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-btn{
+  background:transparent;color:var(--muted);padding:5px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;border:2px solid transparent;transition:all 0.2s;
+  line-height:1.3;text-align:center;
+}
+.nav-btn:hover,.nav-btn.active{background:var(--pink);color:#fff;border-color:var(--pink)}
+.nav-btn span{display:block;font-size:9px;opacity:0.8}
+.hamburger{
+  background:var(--card);color:var(--pink);width:38px;height:38px;
+  border-radius:8px;border:2px solid var(--border);font-size:18px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.mobile-menu{
+  display:none;position:fixed;top:60px;left:0;right:0;z-index:199;
+  background:var(--bg2);border-bottom:2px solid var(--border);padding:12px;
+  flex-direction:column;gap:6px;
+}
+.mobile-menu.open{display:flex}
+.mobile-btn{
+  background:var(--card);color:var(--text);border:2px solid var(--border);
+  border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;
+  display:flex;justify-content:space-between;align-items:center;transition:all 0.2s;
+}
+.mobile-btn:hover,.mobile-btn.active{background:var(--pink);border-color:var(--pink);color:#fff}
+.mobile-btn span{font-size:11px;opacity:0.7}
+
+/* ── HOME ── */
+.hero{
+  min-height:90vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:48px 20px 40px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 55% at 50% 40%,rgba(255,107,157,0.13) 0%,transparent 70%);
+}
+.speed-lines{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.speed-lines svg{position:absolute;top:0;left:0;width:100%;height:100%}
+.hero-badge{
+  background:rgba(255,107,157,0.15);border:2px solid var(--pink);
+  border-radius:20px;padding:4px 16px;font-size:12px;color:var(--pink);
+  margin-bottom:20px;font-weight:700;letter-spacing:1px;position:relative;z-index:1;display:inline-block;
+}
+.hero-title{
+  font-family:'Bangers',cursive;
+  font-size:clamp(52px,11vw,104px);letter-spacing:3px;line-height:0.95;
+  background:linear-gradient(135deg,var(--pink),var(--cyan),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  position:relative;z-index:1;margin-bottom:8px;
+}
+.hero-jp{font-size:clamp(13px,3vw,20px);color:var(--muted);letter-spacing:4px;font-weight:700;margin-bottom:12px;position:relative;z-index:1}
+.hero-sub{
+  font-size:clamp(14px,2.5vw,18px);color:var(--muted);max-width:560px;
+  line-height:1.7;margin-bottom:40px;position:relative;z-index:1;
+}
+.hero-sub em{color:var(--pink);font-style:normal}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;margin-bottom:50px}
+.btn-primary{
+  background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;
+  padding:15px 34px;border-radius:30px;font-size:17px;font-weight:900;
+  font-family:'Bangers',cursive;letter-spacing:2px;
+  box-shadow:0 8px 30px rgba(255,107,157,0.4);
+  border:3px solid rgba(255,255,255,0.25);transition:transform 0.2s,box-shadow 0.2s;
+}
+.btn-primary:hover{transform:scale(1.05);box-shadow:0 12px 40px rgba(255,107,157,0.5)}
+.btn-outline{
+  background:transparent;color:var(--cyan);padding:14px 32px;border-radius:30px;
+  font-size:15px;font-weight:700;border:3px solid var(--cyan);transition:all 0.2s;
+}
+.btn-outline:hover{background:var(--cyan);color:#000}
+.floating-panels{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.fp{
+  width:76px;height:96px;background:linear-gradient(135deg,var(--card),var(--bg3));
+  border:3px solid #111;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:30px;box-shadow:4px 4px 0 #111;
+}
+.fp:nth-child(1){animation:fp1 3s ease-in-out infinite;transform:rotate(-6deg)}
+.fp:nth-child(2){animation:fp2 3.2s ease-in-out infinite;transform:rotate(3deg)}
+.fp:nth-child(3){animation:fp3 2.8s ease-in-out infinite;transform:rotate(-3deg)}
+.fp:nth-child(4){animation:fp4 3.5s ease-in-out infinite;transform:rotate(6deg)}
+@keyframes fp1{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(-6deg) translateY(-10px)}}
+@keyframes fp2{0%,100%{transform:rotate(3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-13px)}}
+@keyframes fp3{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(-3deg) translateY(-7px)}}
+@keyframes fp4{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-11px)}}
+
+.features{padding:60px 20px;max-width:900px;margin:0 auto}
+.section-title{font-family:'Bangers',cursive;font-size:38px;text-align:center;letter-spacing:2px;margin-bottom:6px}
+.section-sub{text-align:center;color:var(--muted);margin-bottom:36px;font-size:14px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.feat-card{
+  background:var(--card);border-radius:16px;padding:22px 18px;
+  border:2px solid var(--border);text-align:center;transition:transform 0.2s,border-color 0.2s;
+}
+.feat-card:hover{transform:translateY(-5px);border-color:var(--pink)}
+.feat-icon{font-size:38px;margin-bottom:12px}
+.feat-en{font-weight:900;font-size:15px;margin-bottom:4px}
+.feat-jp{font-size:12px;color:var(--pink);margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+.cta-banner{
+  margin:0 20px 60px;border-radius:20px;padding:40px 24px;text-align:center;
+  background:linear-gradient(135deg,rgba(255,107,157,0.18),rgba(155,89,182,0.18));
+  border:2px solid var(--pink);position:relative;overflow:hidden;
+}
+
+/* ── CREATE ── */
+.create-wrap{padding:20px 16px 80px;max-width:680px;margin:0 auto}
+.step-bar{display:flex;gap:6px;margin-bottom:28px;justify-content:center}
+.step-item{
+  flex:1;max-width:130px;text-align:center;padding:8px 4px;border-radius:10px;
+  border:2px solid var(--border);background:var(--card);cursor:default;transition:all 0.25s;
+}
+.step-item.done{background:rgba(255,107,157,0.15);border-color:var(--pink);cursor:pointer}
+.step-item.active{background:var(--pink);border-color:var(--pink)}
+.step-num{font-size:18px;font-weight:900;line-height:1;color:var(--muted)}
+.step-item.active .step-num,.step-item.done .step-num{color:#fff}
+.step-en{font-size:10px;font-weight:700;color:var(--muted)}
+.step-item.active .step-en,.step-item.done .step-en{color:#fff}
+.step-jp{font-size:9px;color:var(--muted)}
+.step-item.active .step-jp{color:rgba(255,255,255,0.75)}
+
+.card{background:var(--card);border-radius:20px;padding:24px 20px;border:2px solid var(--border)}
+.card-title{font-family:'Bangers',cursive;font-size:24px;margin-bottom:18px;letter-spacing:1px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-weight:700;margin-bottom:6px;font-size:14px}
+.form-label em{color:var(--pink);font-style:normal;font-size:12px}
+.form-input,.form-textarea,.form-select{
+  width:100%;background:var(--bg3);border:2px solid var(--border);
+  border-radius:12px;padding:11px 14px;color:var(--text);font-size:14px;
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--pink)}
+.form-textarea{resize:vertical;line-height:1.5;min-height:80px}
+.form-select option{background:var(--bg2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-next{
+  width:100%;background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;padding:13px;border-radius:30px;font-size:15px;font-weight:900;
+  letter-spacing:1px;border:3px solid rgba(255,255,255,0.2);margin-top:4px;
+  transition:opacity 0.2s;
+}
+.btn-next:hover{opacity:0.9}
+.btn-back{
+  background:transparent;color:var(--muted);padding:12px 22px;
+  border-radius:30px;font-size:14px;font-weight:700;border:2px solid var(--border);
+  transition:all 0.2s;
+}
+.btn-back:hover{border-color:var(--muted);color:var(--text)}
+.btn-gen{
+  flex:1;background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;padding:13px;border-radius:30px;font-size:15px;font-weight:900;
+  border:3px solid rgba(255,255,255,0.2);transition:opacity 0.2s;
+}
+.btn-gen:hover{opacity:0.9}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+
+/* character card */
+.char-block{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:10px;border:2px solid var(--border)}
+.char-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.char-label{font-weight:800;font-size:13px;color:var(--cyan)}
+.btn-remove{background:rgba(255,107,157,0.15);color:var(--pink);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer}
+.char-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.char-input{
+  width:100%;background:var(--card);border:2px solid var(--border);
+  border-radius:8px;padding:8px 11px;color:var(--text);font-size:13px;
+}
+.btn-add-char{
+  width:100%;background:transparent;color:var(--cyan);
+  border:2px dashed var(--cyan);border-radius:12px;padding:10px;
+  font-size:13px;font-weight:700;margin-bottom:14px;transition:all 0.2s;
+}
+.btn-add-char:hover{background:rgba(0,212,255,0.1)}
+
+/* alert info */
+.info-box{
+  background:rgba(0,212,255,0.1);border:2px solid var(--cyan);
+  border-radius:12px;padding:11px 14px;font-size:13px;color:var(--cyan);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.info-box a{color:var(--yellow);cursor:pointer;text-decoration:underline;font-weight:700}
+
+/* spinner */
+.spinner-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px}
+.spinner{
+  width:44px;height:44px;border-radius:50%;
+  border:4px solid rgba(255,107,157,0.2);border-top:4px solid var(--pink);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-txt{color:var(--pink);font-size:13px;font-weight:700}
+
+/* ── READER ── */
+.chapter-list{background:var(--card);border-radius:14px;padding:14px;margin-bottom:18px;border:2px solid var(--border)}
+.chapter-list-title{font-family:'Bangers',cursive;font-size:18px;color:var(--yellow);margin-bottom:10px}
+.chapter-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  background:var(--bg3);color:var(--text);border:2px solid var(--border);
+  border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;
+}
+.chip.active,.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
+
+.manga-reader{background:var(--card);border-radius:20px;overflow:hidden;border:3px solid #111;box-shadow:8px 8px 0 #111}
+.reader-header{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  padding:18px 20px 14px;border-bottom:3px solid #111;position:relative;overflow:hidden;
+}
+.reader-meta{font-size:10px;color:var(--pink);font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.reader-title{font-family:'Bangers',cursive;font-size:26px;line-height:1;margin-bottom:3px}
+.reader-jp{font-size:13px;color:var(--muted)}
+.reader-body{padding:14px;background:#ede8df;direction:rtl}
+.panels-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.panel-wrap{direction:ltr}
+.panel-wrap.full{grid-column:span 2}
+.manga-panel{
+  background:#1a1a3e;border:3px solid #111;border-radius:0;
+  position:relative;overflow:hidden;min-height:200px;
+}
+.panel-bg{position:absolute;inset:0}
+.panel-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:60px;z-index:1;filter:drop-shadow(0 0 16px currentColor)}
+.panel-num{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.75);border-radius:4px;padding:2px 8px;font-size:9px;font-weight:700;z-index:3;border:1px solid currentColor}
+.panel-sfx{position:absolute;top:6px;right:6px;z-index:3;font-family:'Bangers',cursive;font-size:26px;transform:rotate(-8deg);text-shadow:2px 2px 0 #111,-1px -1px 0 #111}
+.speech-bubble{
+  position:absolute;bottom:52px;left:6px;z-index:3;
+  background:#fff;color:#111;border-radius:14px;padding:6px 11px;
+  font-size:10px;font-weight:700;border:3px solid #111;max-width:150px;line-height:1.4;
+  box-shadow:2px 2px 0 #111;
+}
+.speech-bubble::after{
+  content:'';position:absolute;bottom:-12px;left:14px;width:0;height:0;
+  border-left:7px solid transparent;border-right:7px solid transparent;border-top:12px solid #111;
+}
+.panel-narr{
+  position:absolute;bottom:0;left:0;right:0;z-index:3;
+  background:rgba(0,0,0,0.88);padding:5px 9px;
+  font-size:10px;color:#fff;font-style:italic;
+  border-top:2px solid currentColor;line-height:1.4;
+}
+.panel-action{
+  background:#fff;border-left:4px solid var(--pink);
+  padding:5px 9px;font-size:10px;color:#333;line-height:1.4;
+  border-bottom:2px solid #ddd;
+}
+.reader-footer{
+  background:var(--bg2);padding:14px 18px;border-top:3px solid #111;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.btn-new-chap{
+  background:var(--green);color:#fff;padding:9px 20px;
+  border-radius:20px;font-size:13px;font-weight:800;
+  border:2px solid rgba(255,255,255,0.25);cursor:pointer;transition:opacity 0.2s;
+}
+.btn-new-chap:hover{opacity:0.85}
+.panel-count{font-size:12px;color:var(--muted)}
+
+/* ── HOW TO ── */
+.howto-wrap{padding:20px 20px 80px;max-width:800px;margin:0 auto}
+.step-guide{display:flex;gap:14px;margin-bottom:16px;background:var(--card);border-radius:16px;padding:18px;border:2px solid var(--border)}
+.step-guide-icon{width:50px;height:50px;min-width:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;border:3px solid}
+.step-guide-body{flex:1}
+.step-guide-en{font-weight:900;font-size:15px;margin-bottom:3px}
+.step-guide-jp{font-size:12px;margin-bottom:6px}
+.step-guide-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:5px}
+.step-guide-descjp{font-size:12px;color:rgba(168,168,192,0.65);font-style:italic;line-height:1.5}
+.step-badge{background:currentColor;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto;color:#fff!important;flex-shrink:0}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:36px}
+.tip-card{background:var(--card);border-radius:12px;padding:16px;border:2px solid var(--border);text-align:center}
+.tip-icon{font-size:28px;margin-bottom:8px}
+.tip-en{font-weight:800;font-size:14px;margin-bottom:3px}
+.tip-jp{font-size:11px;color:var(--pink);margin-bottom:7px}
+.tip-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── ABOUT ── */
+.about-wrap{padding:20px 20px 80px;max-width:720px;margin:0 auto}
+.about-hero{background:var(--card);border-radius:20px;padding:36px 22px;border:2px solid var(--border);text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.about-logo{width:76px;height:76px;margin:0 auto 18px;border-radius:18px;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:40px;border:3px solid rgba(255,255,255,0.25);color:#fff}
+.about-title{font-family:'Bangers',cursive;font-size:38px;color:var(--pink);letter-spacing:2px;margin-bottom:4px}
+.about-domain{background:rgba(255,107,157,0.15);border:1px solid var(--pink);border-radius:8px;padding:3px 12px;display:inline-block;font-size:12px;color:var(--pink);margin-bottom:20px}
+.about-desc{color:var(--muted);line-height:1.8;font-size:15px;margin-bottom:10px}
+.about-descjp{color:rgba(168,168,192,0.7);line-height:1.7;font-size:13px;font-style:italic}
+.about-block{background:var(--card);border-radius:16px;padding:18px;margin-bottom:14px;border:2px solid var(--border);display:flex;gap:14px}
+.about-block-icon{font-size:34px;min-width:44px;text-align:center}
+.about-block-en{font-weight:900;font-size:15px;margin-bottom:3px}
+.about-block-jp{font-size:11px;color:var(--cyan);margin-bottom:6px}
+.about-block-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:6px}
+.about-block-descjp{font-size:12px;color:rgba(168,168,192,0.6);font-style:italic;line-height:1.5}
+.about-footer{background:rgba(255,229,102,0.1);border:2px solid var(--yellow);border-radius:12px;padding:14px;text-align:center}
+.about-footer p{font-size:12px;color:var(--yellow);font-weight:700;margin-bottom:4px}
+.about-footer small{font-size:10px;color:var(--muted)}
+
+/* ── LEGAL ── */
+.legal-wrap{padding:20px 20px 80px;max-width:760px;margin:0 auto}
+.tab-row{display:flex;gap:8px;margin-bottom:22px;justify-content:center;flex-wrap:wrap}
+.tab-btn{background:var(--card);color:var(--muted);border:2px solid var(--border);border-radius:20px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;line-height:1.3;text-align:center}
+.tab-btn:hover,.tab-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
+.tab-btn small{display:block;font-size:9px;opacity:0.8}
+.legal-card{background:var(--card);border-radius:16px;padding:22px 18px;border:2px solid var(--border)}
+.legal-section{margin-bottom:20px}
+.legal-section h4{color:var(--text);font-size:14px;font-weight:800;margin-bottom:6px}
+.legal-section p{color:var(--muted);font-size:13px;line-height:1.7}
+.legal-tab{display:none}
+.legal-tab.active{display:block}
+.legal-title{font-size:18px;font-weight:800;margin-bottom:6px}
+.legal-date{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:2px solid var(--border);padding:28px 20px 20px;text-align:center;position:relative;z-index:1}
+.footer-links{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:14px}
+.footer-link{background:transparent;color:var(--muted);border:none;font-size:13px;font-weight:700;cursor:pointer;padding:4px 8px;transition:color 0.2s}
+.footer-link:hover{color:var(--pink)}
+.footer-link em{color:var(--pink);font-style:normal;font-size:11px}
+.footer-brand{font-family:'Bangers',cursive;font-size:20px;color:var(--pink);letter-spacing:2px;margin-bottom:4px}
+.footer-copy{font-size:11px;color:var(--muted);margin-bottom:3px}
+.footer-jp{font-size:10px;color:rgba(168,168,192,0.45)}
+
+/* responsive */
+@media(max-width:600px){
+  .nav-btn{display:none}
+  .form-row{grid-template-columns:1fr}
+  .step-guide{flex-direction:column}
+  .step-guide-icon{width:42px;height:42px;min-width:42px}
+  .panels-grid{grid-template-columns:1fr}
+  .panel-wrap.full{grid-column:span 1}
+}
+@media(min-width:601px){
+  .hamburger{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">漫</div>
+    <div class="nav-logo-text">
+      <span class="nav-logo-title">MangaCreator</span>
+      <span class="nav-logo-sub">.biz.id</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <button class="nav-btn active" id="nav-home" onclick="showPage('home')">Home<span>ホーム</span></button>
+    <button class="nav-btn" id="nav-create" onclick="showPage('create')">Create<span>作成</span></button>
+    <button class="nav-btn" id="nav-howto" onclick="showPage('howto')">How To<span>使い方</span></button>
+    <button class="nav-btn" id="nav-about" onclick="showPage('about')">About<span>About</span></button>
+    <button class="nav-btn" id="nav-legal" onclick="showPage('legal')">Legal<span>法律</span></button>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-btn active" id="mob-home" onclick="showPage('home');toggleMenu()">Home <span>ホーム</span></button>
+  <button class="mobile-btn" id="mob-create" onclick="showPage('create');toggleMenu()">Create <span>作成</span></button>
+  <button class="mobile-btn" id="mob-howto" onclick="showPage('howto');toggleMenu()">How To <span>使い方</span></button>
+  <button class="mobile-btn" id="mob-about" onclick="showPage('about');toggleMenu()">About <span>About</span></button>
+  <button class="mobile-btn" id="mob-legal" onclick="showPage('legal');toggleMenu()">Legal <span>法律</span></button>
+</div>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="speed-lines">
+      <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+        <g id="sl" opacity="0.07"></g>
+      </svg>
+    </div>
+    <div class="hero-badge">🌸 AI-Powered Manga Creator / AIマンガクリエーター</div>
+    <h1 class="hero-title bangers">MANGA<br>CREATOR</h1>
+    <div class="hero-jp">マンガクリエーター</div>
+    <p class="hero-sub">
+      Turn your story ideas into stunning manga panels with AI.<br>
+      <em>AIであなたのストーリーを漫画パネルに変換しよう。</em>
+    </p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="showPage('create')">🚀 START CREATING / 作成開始</button>
+      <button class="btn-outline" onclick="showPage('howto')">📖 How To Use / 使い方</button>
+    </div>
+    <div class="floating-panels">
+      <div class="fp">⚔️</div>
+      <div class="fp">🌸</div>
+      <div class="fp">💥</div>
+      <div class="fp">✨</div>
+    </div>
+  </div>
+
+  <div class="features">
+    <h2 class="section-title bangers" style="color:var(--yellow)">FEATURES / 機能</h2>
+    <p class="section-sub">Everything you need to create your manga / 漫画作成に必要なすべて</p>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-icon">✍️</div><div class="feat-en">Write Your Story</div><div class="feat-jp">ストーリーを書く</div><div class="feat-desc">Input your idea and watch it transform into manga panels</div></div>
+      <div class="feat-card"><div class="feat-icon">🎭</div><div class="feat-en">Create Characters</div><div class="feat-jp">キャラクター作成</div><div class="feat-desc">Define heroes, villains, and supporting cast with detail</div></div>
+      <div class="feat-card"><div class="feat-icon">📖</div><div class="feat-en">Multi-Chapter</div><div class="feat-jp">マルチチャプター</div><div class="feat-desc">Build epic sagas with unlimited chapters in one session</div></div>
+      <div class="feat-card"><div class="feat-icon">🎨</div><div class="feat-en">Manga Style</div><div class="feat-jp">漫画スタイル</div><div class="feat-desc">Authentic panel layouts with speech bubbles &amp; SFX effects</div></div>
+    </div>
+  </div>
+
+  <div class="cta-banner">
+    <div class="speed-lines"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g id="sl2" opacity="0.06"></g></svg></div>
+    <h3 class="bangers" style="font-size:34px;color:var(--pink);margin-bottom:8px;position:relative;z-index:1">YOUR STORY AWAITS / あなたの物語が待っている</h3>
+    <p style="color:var(--muted);margin-bottom:22px;position:relative;z-index:1">Start creating your manga today — it's free! / 今日から漫画を作成しよう！</p>
+    <button class="btn-primary" style="position:relative;z-index:1" onclick="showPage('create')">BEGIN NOW / 今すぐ始める ✨</button>
+  </div>
+</div>
+
+<!-- ═══════════════ CREATE ═══════════════ -->
+<div id="page-create" class="page">
+  <div class="create-wrap">
+    <h2 class="bangers section-title" style="color:var(--cyan);padding-top:10px">CREATE MANGA / 漫画作成</h2>
+    <p class="section-sub" style="margin-bottom:22px">Build your manga story step by step / ステップごとに漫画ストーリーを作ろう</p>
+
+    <!-- Step bar -->
+    <div class="step-bar">
+      <div class="step-item active" id="sb1"><div class="step-num">1</div><div class="step-en">Setup</div><div class="step-jp">設定</div></div>
+      <div class="step-item" id="sb2"><div class="step-num">2</div><div class="step-en">Characters</div><div class="step-jp">キャラ</div></div>
+      <div class="step-item" id="sb3"><div class="step-num">3</div><div class="step-en">Chapter</div><div class="step-jp">話</div></div>
+      <div class="step-item" id="sb4"><div class="step-num">4</div><div class="step-en">Reader</div><div class="step-jp">読む</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="step1" class="card">
+      <div class="card-title bangers" style="color:var(--yellow)">STEP 1: MANGA SETUP / 漫画設定</div>
+      <div class="form-group">
+        <label class="form-label">Manga Title <em>/ タイトル</em></label>
+        <input class="form-input" id="mTitle" placeholder="e.g. Shadow Blade Chronicles" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Japanese Title <em>/ 日本語タイトル（任意）</em></label>
+        <input class="form-input" id="mTitleJp" placeholder="e.g. 影刃の物語" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Story Synopsis <em>/ あらすじ</em></label>
+        <textarea class="form-textarea" id="mSynopsis" placeholder="Write your overall story idea here..." rows="4"></textarea>
+      </div>
+      <div class="form-row form-group">
+        <div>
+          <label class="form-label">Genre <em>/ ジャンル</em></label>
+          <select class="form-select" id="mGenre">
+            <option>shonen</option><option>shoujo</option><option>seinen</option>
+            <option>josei</option><option>isekai</option><option>slice-of-life</option>
+            <option>mystery</option><option>fantasy</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Style <em>/ スタイル</em></label>
+          <select class="form-select" id="mStyle">
+            <option>action</option><option>romance</option><option>comedy</option>
+            <option>drama</option><option>horror</option><option>adventure</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-next" onclick="goStep(2)">NEXT: CHARACTERS → / 次へ：キャラクター →</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" class="card" style="display:none">
+      <div class="card-title bangers" style="color:var(--green)">STEP 2: CHARACTERS / キャラクター</div>
+      <div id="charList"></div>
+      <button class="btn-add-char" onclick="addChar()">+ Add Character / キャラクターを追加</button>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← Back / 戻る</button>
+        <button class="btn-gen" onclick="goStep(3)">NEXT: CHAPTER → / 次へ →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" class="card" style="display:none">
+      <div class="card-title bangers" style="color:var(--orange)" id="chapTitle3">STEP 3: CHAPTER 1 / 第1話</div>
+      <div id="chapInfoBox"></div>
+      <div class="form-group">
+        <label class="form-label">Chapter Title <em>/ 話のタイトル</em></label>
+        <input class="form-input" id="cTitle" placeholder="Chapter 1: The Beginning" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Japanese Title <em>/ 日本語タイトル（任意）</em></label>
+        <input class="form-input" id="cTitleJp" placeholder="第1話：始まり" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Chapter Plot <em>/ プロット</em></label>
+        <textarea class="form-textarea" id="cPlot" placeholder="Describe what happens in this chapter in detail..." rows="5"></textarea>
+      </div>
+      <div id="genSpinner" style="display:none"><div class="spinner-wrap"><div class="spinner"></div><div class="spinner-txt">AI generating... / AI生成中...</div></div></div>
+      <div id="genBtns" class="btn-row">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-gen" onclick="generateChapter()">✨ GENERATE PANELS / パネル生成</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Reader -->
+    <div id="step4" style="display:none">
+      <div id="chapListBox" style="display:none"></div>
+      <div id="readerBox"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ HOW TO ═══════════════ -->
+<div id="page-howto" class="page">
+  <div class="howto-wrap">
+    <h2 class="section-title bangers" style="color:var(--cyan);padding-top:10px">HOW TO USE / 使い方</h2>
+    <p class="section-sub">Create your manga in 5 simple steps / 5つの簡単なステップで漫画を作ろう</p>
+    <div class="step-guide" style="border-left:4px solid var(--pink)">
+      <div class="step-guide-icon" style="background:rgba(255,107,157,0.15);border-color:var(--pink);color:var(--pink)">📝</div>
+      <div class="step-guide-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+          <span class="step-guide-en">Setup Your Manga</span>
+          <span class="step-guide-jp" style="color:var(--pink)">/ 漫画を設定する</span>
+          <span style="background:var(--pink);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto">Step 1</span>
+        </div>
+        <p class="step-guide-desc">Enter your manga title, synopsis, choose a genre and art style. This forms the foundation of your story.</p>
+        <p class="step-guide-descjp">タイトル、あらすじ、ジャンル、スタイルを入力して漫画の基盤を作ります。</p>
+      </div>
+    </div>
+    <div class="step-guide" style="border-left:4px solid var(--cyan)">
+      <div class="step-guide-icon" style="background:rgba(0,212,255,0.15);border-color:var(--cyan);color:var(--cyan)">🎭</div>
+      <div class="step-guide-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+          <span class="step-guide-en">Create Characters</span>
+          <span class="step-guide-jp" style="color:var(--cyan)">/ キャラクターを作る</span>
+          <span style="background:var(--cyan);color:#000;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto">Step 2</span>
+        </div>
+        <p class="step-guide-desc">Add characters with names, roles (protagonist/antagonist/supporting), appearance descriptions, and personality traits.</p>
+        <p class="step-guide-descjp">名前、役割、外見の説明、性格特性でキャラクターを追加します。</p>
+      </div>
+    </div>
+    <div class="step-guide" style="border-left:4px solid var(--yellow)">
+      <div class="step-guide-icon" style="background:rgba(255,229,102,0.15);border-color:var(--yellow);color:var(--yellow)">✍️</div>
+      <div class="step-guide-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+          <span class="step-guide-en">Write Chapter Plot</span>
+          <span class="step-guide-jp" style="color:var(--yellow)">/ チャプタープロット</span>
+          <span style="background:var(--yellow);color:#000;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto">Step 3</span>
+        </div>
+        <p class="step-guide-desc">Give each chapter a title and write a detailed plot summary. AI transforms this into manga panels with dialogs and SFX.</p>
+        <p class="step-guide-descjp">各話にタイトルとプロットを書きます。AIがパネル、ダイアログ、効果音に変換します。</p>
+      </div>
+    </div>
+    <div class="step-guide" style="border-left:4px solid var(--green)">
+      <div class="step-guide-icon" style="background:rgba(46,204,113,0.15);border-color:var(--green);color:var(--green)">👁️</div>
+      <div class="step-guide-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+          <span class="step-guide-en">Read Your Manga</span>
+          <span class="step-guide-jp" style="color:var(--green)">/ 漫画を読む</span>
+          <span style="background:var(--green);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto">Step 4</span>
+        </div>
+        <p class="step-guide-desc">View your generated manga in authentic right-to-left format with panels, speech bubbles, and narration boxes.</p>
+        <p class="step-guide-descjp">パネル、吹き出し、ナレーションボックスを備えた本物の右から左への読み方で漫画を見ます。</p>
+      </div>
+    </div>
+    <div class="step-guide" style="border-left:4px solid var(--orange)">
+      <div class="step-guide-icon" style="background:rgba(255,140,66,0.15);border-color:var(--orange);color:var(--orange)">📚</div>
+      <div class="step-guide-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+          <span class="step-guide-en">Add More Chapters</span>
+          <span class="step-guide-jp" style="color:var(--orange)">/ 話を追加する</span>
+          <span style="background:var(--orange);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:auto">Step 5</span>
+        </div>
+        <p class="step-guide-desc">Keep building your story! Add as many chapters as you want. All chapters are saved in your current session.</p>
+        <p class="step-guide-descjp">ストーリーを作り続けよう！好きなだけ話を追加できます。セッション中は保存されます。</p>
+      </div>
+    </div>
+
+    <h3 class="section-title bangers" style="color:var(--yellow);margin:36px 0 18px">TIPS &amp; TRICKS / ヒント</h3>
+    <div class="tips-grid">
+      <div class="tip-card"><div class="tip-icon">💡</div><div class="tip-en">Be Specific</div><div class="tip-jp">具体的に書く</div><div class="tip-desc">More detail in your plot = more accurate, interesting panels.</div></div>
+      <div class="tip-card"><div class="tip-icon">🎯</div><div class="tip-en">Describe Characters</div><div class="tip-jp">キャラを詳しく</div><div class="tip-desc">Detailed character descriptions help AI maintain consistency.</div></div>
+      <div class="tip-card"><div class="tip-icon">🔄</div><div class="tip-en">Regenerate Freely</div><div class="tip-jp">何度でも生成</div><div class="tip-desc">Not happy? Tweak your plot and generate again for fresh results.</div></div>
+      <div class="tip-card"><div class="tip-icon">📖</div><div class="tip-en">Read Right to Left</div><div class="tip-jp">右から左へ</div><div class="tip-desc">Traditional manga format — our reader follows authentic style.</div></div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn-primary" onclick="showPage('create')">🚀 START NOW / 今すぐ始める</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<div id="page-about" class="page">
+  <div class="about-wrap">
+    <div class="about-hero">
+      <div class="speed-lines" style="opacity:0.05"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g id="sl3"></g></svg></div>
+      <div class="about-logo" style="position:relative;z-index:1">漫</div>
+      <div class="about-title bangers" style="position:relative;z-index:1">MANGACREATOR</div>
+      <div style="color:var(--cyan);font-weight:700;letter-spacing:3px;margin-bottom:8px;position:relative;z-index:1">マンガクリエーター</div>
+      <div class="about-domain" style="position:relative;z-index:1">mangacreator.biz.id</div>
+      <p class="about-desc" style="position:relative;z-index:1">MangaCreator is an AI-powered platform that transforms your story ideas into manga panels. We believe everyone has a story to tell — and now, anyone can tell it in manga form.</p>
+      <p class="about-descjp" style="position:relative;z-index:1">マンガクリエーターは、あなたのストーリーアイデアを漫画パネルに変換するAIプラットフォームです。誰もが語るべき物語を持っている — 今、誰もが漫画形式でそれを語れます。</p>
+    </div>
+    <div class="about-block">
+      <div class="about-block-icon">🎯</div>
+      <div>
+        <div class="about-block-en">Our Mission</div><div class="about-block-jp">/ ミッション</div>
+        <p class="about-block-desc">Democratize manga creation by making it accessible to everyone, regardless of artistic skill. Your imagination is the only tool you need.</p>
+        <p class="about-block-descjp">芸術的スキルに関わらず、誰もが利用できるようにすることで漫画制作を民主化します。</p>
+      </div>
+    </div>
+    <div class="about-block">
+      <div class="about-block-icon">🤖</div>
+      <div>
+        <div class="about-block-en">Powered by AI</div><div class="about-block-jp">/ AIで動作</div>
+        <p class="about-block-desc">We use Claude AI (Anthropic) to intelligently transform your story plots into structured manga panels with authentic dialog and sound effects.</p>
+        <p class="about-block-descjp">Claude AI（Anthropic）を使用して、ストーリープロットを本格的なダイアログと効果音を持つ漫画パネルに変換します。</p>
+      </div>
+    </div>
+    <div class="about-block">
+      <div class="about-block-icon">🌍</div>
+      <div>
+        <div class="about-block-en">Who We're For</div><div class="about-block-jp">/ 対象ユーザー</div>
+        <p class="about-block-desc">Aspiring manga artists, writers, storytellers, and anyone who loves manga and wants to bring their stories to life.</p>
+        <p class="about-block-descjp">漫画家を目指す方、ライター、ストーリーテラー、漫画が好きでストーリーを実現させたい方のためのツールです。</p>
+      </div>
+    </div>
+    <div class="about-footer">
+      <p>Version 1.0 • © 2025 MangaCreator.biz.id • Made with ❤️ for manga lovers worldwide</p>
+      <small>世界中の漫画ファンのために愛を込めて制作</small>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LEGAL ═══════════════ -->
+<div id="page-legal" class="page">
+  <div class="legal-wrap">
+    <h2 class="section-title bangers" style="color:var(--purple);padding-top:10px">LEGAL / 法律情報</h2>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="showTab('privacy')">Privacy Policy<small>プライバシー</small></button>
+      <button class="tab-btn" onclick="showTab('terms')">Terms of Service<small>利用規約</small></button>
+      <button class="tab-btn" onclick="showTab('cookies')">Cookies<small>クッキー</small></button>
+    </div>
+    <div class="legal-card">
+      <!-- PRIVACY -->
+      <div id="tab-privacy" class="legal-tab active">
+        <div class="legal-title" style="color:var(--cyan)">Privacy Policy / プライバシーポリシー</div>
+        <div class="legal-date">Last updated / 最終更新: January 1, 2025</div>
+        <div class="legal-section"><h4>Information We Collect / 収集する情報</h4><p>We collect information you provide when creating manga, including story content, character descriptions, and chapter plots. We do not collect personal identification information unless you explicitly provide it. / 漫画作成時に提供される情報を収集します。明示的に提供しない限り、個人識別情報は収集しません。</p></div>
+        <div class="legal-section"><h4>How We Use Your Information / 情報の使用方法</h4><p>Your content is used solely to generate manga panels via AI processing. We do not sell, trade, or transfer your information to third parties. / コンテンツはAI処理を通じてパネルを生成するためのみに使用されます。第三者への販売や転送は行いません。</p></div>
+        <div class="legal-section"><h4>Data Storage / データ保存</h4><p>Content created on MangaCreator exists only in your browser session. We do not permanently store your manga content on our servers. / 作成されたコンテンツはブラウザセッションにのみ存在します。サーバーへの永続的な保存は行いません。</p></div>
+        <div class="legal-section"><h4>AI Processing / AI処理</h4><p>Story content is processed by Anthropic's Claude AI to generate manga panels. Please review Anthropic's privacy policy for details on AI processing. / ストーリーコンテンツはAnthropicのClaude AIで処理されます。</p></div>
+        <div class="legal-section"><h4>Contact / お問い合わせ</h4><p>For privacy concerns: <strong style="color:var(--cyan)">privacy@mangacreator.biz.id</strong></p></div>
+      </div>
+      <!-- TERMS -->
+      <div id="tab-terms" class="legal-tab">
+        <div class="legal-title" style="color:var(--pink)">Terms of Service / 利用規約</div>
+        <div class="legal-date">Effective / 発効日: January 1, 2025</div>
+        <div class="legal-section"><h4>Acceptance / 同意</h4><p>By using MangaCreator, you agree to these terms. If you do not agree, please do not use our service. / MangaCreatorを使用することで、これらの規約に同意したことになります。</p></div>
+        <div class="legal-section"><h4>Permitted Use / 許可された使用</h4><p>MangaCreator is for personal, non-commercial use. You may create manga for personal enjoyment, educational purposes, or sharing with friends. / 個人の非商業的使用を目的としています。</p></div>
+        <div class="legal-section"><h4>Content Responsibility / コンテンツの責任</h4><p>You are responsible for all content you create. Do not create harmful, offensive, or rights-violating content. Prohibited: violence, hate speech, adult content, or content targeting minors. / 作成するすべてのコンテンツに責任を持ってください。有害なコンテンツの作成は禁止されています。</p></div>
+        <div class="legal-section"><h4>Intellectual Property / 知的財産</h4><p>You retain ownership of your original story ideas. AI-generated panel content is provided for personal use. Commercial use requires prior written consent. / オリジナルストーリーの所有権はあなたにあります。</p></div>
+        <div class="legal-section"><h4>Service Availability / サービス可用性</h4><p>We strive for high uptime but cannot guarantee uninterrupted service. We reserve the right to modify or discontinue services with notice. / 高い稼働率を目指しますが中断のないサービスを保証できません。</p></div>
+        <div class="legal-section"><h4>Limitation of Liability / 責任の制限</h4><p>MangaCreator is provided "as is". We are not liable for any damages arising from the use of our service. / 「現状のまま」提供されます。</p></div>
+        <div class="legal-section"><h4>Contact / お問い合わせ</h4><p>For legal questions: <strong style="color:var(--pink)">legal@mangacreator.biz.id</strong></p></div>
+      </div>
+      <!-- COOKIES -->
+      <div id="tab-cookies" class="legal-tab">
+        <div class="legal-title" style="color:var(--yellow)">Cookie Policy / クッキーポリシー</div>
+        <div class="legal-date">Effective / 発効日: January 1, 2025</div>
+        <div class="legal-section"><h4>What Are Cookies / クッキーとは</h4><p>Cookies are small text files stored on your device to improve your browsing experience. / クッキーとは、ブラウジング体験を向上させるためにデバイスに保存される小さなテキストファイルです。</p></div>
+        <div class="legal-section"><h4>Cookies We Use / 使用するクッキー</h4><p>Session cookies only: Maintain your current manga creation session (deleted when browser closes). These are strictly necessary for the service to function. / セッションクッキーのみ：現在の漫画作成セッションを維持します。</p></div>
+        <div class="legal-section"><h4>We Do NOT Use / 使用しないもの</h4><p>We do not use tracking cookies, advertising cookies, or third-party analytics cookies. Your privacy is our priority. / トラッキングクッキー、広告クッキー、第三者分析クッキーは一切使用しません。</p></div>
+        <div class="legal-section"><h4>Managing Cookies / クッキーの管理</h4><p>You can control cookies through your browser settings. Disabling session cookies may affect MangaCreator's functionality. / ブラウザの設定でクッキーを管理できます。</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <button class="footer-link" onclick="showPage('home')">Home <em>/ ホーム</em></button>
+    <button class="footer-link" onclick="showPage('create')">Create <em>/ 作成</em></button>
+    <button class="footer-link" onclick="showPage('howto')">How To <em>/ 使い方</em></button>
+    <button class="footer-link" onclick="showPage('about')">About</button>
+    <button class="footer-link" onclick="showPage('legal')">Legal <em>/ 法律</em></button>
+  </div>
+  <div class="footer-brand bangers">MANGACREATOR.BIZ.ID</div>
+  <div class="footer-copy">© 2025 MangaCreator • AI-Powered Manga Creation Platform</div>
+  <div class="footer-jp">AIマンガ作成プラットフォーム • Made with ❤️ for manga lovers</div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const state = {
+  step: 1,
+  manga: { title:'', titleJp:'', synopsis:'', genre:'shonen', style:'action' },
+  chars: [{ name:'', role:'protagonist', desc:'', trait:'' }],
+  chapters: [],
+  currentChapIdx: -1,
+};
+
+// ══════════════════════════════════════════
+// SPEED LINES SVG
+// ══════════════════════════════════════════
+function drawSpeedLines(id, color='#FF6B9D', cx=200, cy=200) {
+  const g = document.getElementById(id);
+  if (!g) return;
+  let html = '';
+  for (let i = 0; i < 24; i++) {
+    const a = (i / 24) * 360 * Math.PI / 180;
+    html += `<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*600}" y2="${cy+Math.sin(a)*600}" stroke="${color}" stroke-width="1" opacity="0.5"/>`;
+  }
+  g.innerHTML = html;
+}
+drawSpeedLines('sl','#FF6B9D',200,200);
+drawSpeedLines('sl2','#FF6B9D',200,150);
+drawSpeedLines('sl3','#00D4FF',200,150);
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const PAGES = ['home','create','howto','about','legal'];
+
+function showPage(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.toggle('active', p===id);
+    const nb = document.getElementById('nav-'+p);
+    const mb = document.getElementById('mob-'+p);
+    if (nb) nb.classList.toggle('active', p===id);
+    if (mb) mb.classList.toggle('active', p===id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if (id==='create') renderStep(state.step);
+}
+
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// TABS (legal)
+// ══════════════════════════════════════════
+function showTab(id) {
+  ['privacy','terms','cookies'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===id);
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['privacy','terms','cookies'][i]===id);
+  });
+}
+
+// ══════════════════════════════════════════
+// STEP MANAGEMENT
+// ══════════════════════════════════════════
+function goStep(n) {
+  if (n===2) {
+    const t = document.getElementById('mTitle').value.trim();
+    if (!t) { alert('Please enter a manga title! / タイトルを入力してください！'); return; }
+    state.manga.title = t;
+    state.manga.titleJp = document.getElementById('mTitleJp').value;
+    state.manga.synopsis = document.getElementById('mSynopsis').value;
+    state.manga.genre = document.getElementById('mGenre').value;
+    state.manga.style = document.getElementById('mStyle').value;
+  }
+  state.step = n;
+  renderStep(n);
+}
+
+function renderStep(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('step'+i);
+    if (el) el.style.display = (i===n) ? 'block' : 'none';
+  });
+  document.getElementById('step4').style.display = (n===4) ? 'block' : 'none';
+
+  // Update step bar
+  [1,2,3,4].forEach(i => {
+    const sb = document.getElementById('sb'+i);
+    sb.className = 'step-item' + (i<n ? ' done' : '') + (i===n ? ' active' : '');
+    if (i < n) sb.setAttribute('onclick', `goStep(${i})`);
+    else sb.removeAttribute('onclick');
+  });
+
+  if (n===2) renderCharList();
+  if (n===3) {
+    const chapNum = state.chapters.length + 1;
+    document.getElementById('chapTitle3').textContent = `STEP 3: CHAPTER ${chapNum} / 第${chapNum}話`;
+    document.getElementById('cTitle').value = '';
+    document.getElementById('cTitleJp').value = '';
+    document.getElementById('cPlot').value = '';
+    const box = document.getElementById('chapInfoBox');
+    if (state.chapters.length > 0) {
+      box.innerHTML = `<div class="info-box">✅ ${state.chapters.length} chapter(s) created / ${state.chapters.length}話作成済み <a onclick="goStep(4)">→ View latest / 最新を見る</a></div>`;
+    } else {
+      box.innerHTML = '';
+    }
+  }
+  if (n===4) renderReader();
+}
+
+// ══════════════════════════════════════════
+// CHARACTERS
+// ══════════════════════════════════════════
+function renderCharList() {
+  const list = document.getElementById('charList');
+  const roles = ['protagonist','antagonist','supporting','mentor','comic relief'];
+  list.innerHTML = state.chars.map((ch, i) => `
+    <div class="char-block">
+      <div class="char-header">
+        <span class="char-label">Character ${i+1} / キャラ${i+1}</span>
+        ${state.chars.length > 1 ? `<button class="btn-remove" onclick="removeChar(${i})">✕ Remove</button>` : ''}
+      </div>
+      <div class="char-grid">
+        <input class="char-input" placeholder="Name / 名前" value="${escHtml(ch.name)}" oninput="updateChar(${i},'name',this.value)"/>
+        <select class="char-input" onchange="updateChar(${i},'role',this.value)">
+          ${roles.map(r=>`<option ${ch.role===r?'selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <input class="char-input" style="width:100%;margin-bottom:8px" placeholder="Appearance / 外見" value="${escHtml(ch.desc)}" oninput="updateChar(${i},'desc',this.value)"/>
+      <input class="char-input" style="width:100%" placeholder="Personality / 性格" value="${escHtml(ch.trait)}" oninput="updateChar(${i},'trait',this.value)"/>
+    </div>
+  `).join('');
+}
+
+function updateChar(i, key, val) { state.chars[i][key] = val; }
+function removeChar(i) { state.chars.splice(i,1); renderCharList(); }
+function addChar() { state.chars.push({name:'',role:'supporting',desc:'',trait:''}); renderCharList(); }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════════
+// GENERATE CHAPTER
+// ══════════════════════════════════════════
+async function generateChapter() {
+  const plot = document.getElementById('cPlot').value.trim();
+  if (!plot) { alert('Please enter a chapter plot! / プロットを入力してください！'); return; }
+
+  document.getElementById('genBtns').style.display = 'none';
+  document.getElementById('genSpinner').style.display = 'block';
+
+  const charList = state.chars.filter(c=>c.name).map(c=>`${c.name} (${c.role}): ${c.desc}, ${c.trait}`).join('; ');
+  const chapNum = state.chapters.length + 1;
+  const cTitle = document.getElementById('cTitle').value || `Chapter ${chapNum}`;
+  const cTitleJp = document.getElementById('cTitleJp').value || `第${chapNum}話`;
+
+  const prompt = `You are a manga panel writer. Create exactly 5 manga panels for this chapter.
+Manga: "${state.manga.title}" | Genre: ${state.manga.genre} | Style: ${state.manga.style}
+Characters: ${charList || 'unnamed protagonist'}
+Chapter ${chapNum}: "${cTitle}"
+Plot: ${plot}
+
+Respond ONLY with a valid JSON array of 5 objects (no markdown, no backticks, no explanation):
+[{"dialog":"spoken line or empty string","narration":"short caption or empty string","sfx":"sound word or empty string","action":"visual description"},...]`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = (data.content?.[0]?.text || '').replace(/```json|```/g,'').trim();
+    let panels = JSON.parse(raw);
+    if (!Array.isArray(panels)) throw new Error('Not array');
+
+    const chapter = {
+      id: Date.now(),
+      chapterNum: chapNum,
+      title: cTitle,
+      titleJp: cTitleJp,
+      panels: panels.slice(0,5),
+      plot,
+    };
+    state.chapters.push(chapter);
+    state.currentChapIdx = state.chapters.length - 1;
+    state.step = 4;
+    renderStep(4);
+  } catch(e) {
+    alert('Generation failed. Please try again.\n生成に失敗しました。もう一度お試しください。\n\nError: ' + e.message);
+    document.getElementById('genBtns').style.display = 'flex';
+    document.getElementById('genSpinner').style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════
+// RENDER READER
+// ══════════════════════════════════════════
+const PANEL_THEMES = [
+  { bg:'linear-gradient(135deg,#1a1a3e,#2d1b4e)', accent:'#9B59B6', icon:'⚔️' },
+  { bg:'linear-gradient(135deg,#0d2137,#1a3a4e)', accent:'#00D4FF', icon:'🌊' },
+  { bg:'linear-gradient(135deg,#2d0f1e,#4e1b30)', accent:'#FF6B9D', icon:'🌸' },
+  { bg:'linear-gradient(135deg,#1a2d0f,#2d4e1b)', accent:'#2ECC71', icon:'🌿' },
+  { bg:'linear-gradient(135deg,#2d2205,#4e3c0d)', accent:'#FFE566', icon:'⚡' },
+];
+
+function renderReader() {
+  const idx = state.currentChapIdx;
+  const chap = state.chapters[idx];
+  if (!chap) return;
+
+  // Chapter list
+  const listBox = document.getElementById('chapListBox');
+  if (state.chapters.length > 1) {
+    listBox.style.display = 'block';
+    listBox.innerHTML = `
+      <div class="chapter-list">
+        <div class="chapter-list-title">ALL CHAPTERS / 全話</div>
+        <div class="chapter-chips">
+          ${state.chapters.map((c,i) => `
+            <button class="chip ${i===idx?'active':''}" onclick="switchChap(${i})">
+              Ch.${c.chapterNum} ${escHtml(c.title)}
+            </button>
+          `).join('')}
+        </div>
+      </div>`;
+  } else {
+    listBox.style.display = 'none';
+  }
+
+  // Panels HTML
+  const panelsHtml = chap.panels.map((p, i) => {
+    const th = PANEL_THEMES[i % PANEL_THEMES.length];
+    // build speed lines inline
+    const lines = Array.from({length:20}, (_,j) => {
+      const a = (j/20)*360*Math.PI/180;
+      return `<line x1="50%" y1="50%" x2="${50+Math.cos(a)*150}%" y2="${50+Math.sin(a)*150}%" stroke="${th.accent}" stroke-width="1" opacity="0.35"/>`;
+    }).join('');
+    return `
+      <div class="panel-wrap ${i===0?'full':''}">
+        <div class="manga-panel" style="background:${th.bg}">
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">${lines}</svg>
+          <div class="panel-icon" style="color:${th.accent}">${th.icon}</div>
+          <div class="panel-num" style="color:${th.accent};border-color:${th.accent}">Panel ${i+1}</div>
+          ${p.sfx ? `<div class="panel-sfx" style="color:${th.accent}">${escHtml(p.sfx)}</div>` : ''}
+          ${p.dialog ? `<div class="speech-bubble">${escHtml(p.dialog)}</div>` : ''}
+          ${p.narration ? `<div class="panel-narr" style="border-color:${th.accent}">${escHtml(p.narration)}</div>` : ''}
+        </div>
+        ${p.action ? `<div class="panel-action">🎬 ${escHtml(p.action)}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  document.getElementById('readerBox').innerHTML = `
+    <div class="manga-reader">
+      <div class="reader-header">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.07" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
+          ${Array.from({length:20},(_,i)=>{const a=(i/20)*360*Math.PI/180;return `<line x1="200" y1="80" x2="${200+Math.cos(a)*500}" y2="${80+Math.sin(a)*500}" stroke="#FF6B9D" stroke-width="1"/>`}).join('')}
+        </svg>
+        <div class="reader-meta" style="position:relative;z-index:1">${escHtml(state.manga.title)} • CHAPTER ${chap.chapterNum}</div>
+        <div class="reader-title" style="position:relative;z-index:1">${escHtml(chap.title)}</div>
+        <div class="reader-jp" style="position:relative;z-index:1">${escHtml(chap.titleJp)}</div>
+      </div>
+      <div class="reader-body">
+        <div class="panels-grid">${panelsHtml}</div>
+      </div>
+      <div class="reader-footer">
+        <button class="btn-new-chap" onclick="newChapter()">+ New Chapter / 新しい話</button>
+        <div class="panel-count">${chap.panels.length} panels / ${chap.panels.length}パネル</div>
+      </div>
+    </div>`;
+}
+
+function switchChap(i) {
+  state.currentChapIdx = i;
+  renderReader();
+}
+
+function newChapter() {
+  state.step = 3;
+  renderStep(3);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+// Init character list
+renderCharList();
+</script>
+</body>
+</html>
